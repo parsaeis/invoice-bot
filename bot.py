@@ -113,18 +113,17 @@ async def quantity(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return QUANTITY
 
-    buy_now = context.user_data["temp_buy_now"]
+    buy_now_price = context.user_data["temp_buy_now"]
     real_price = context.user_data["temp_real_price"]
 
     context.user_data["cards"].append(
-        (buy_now, real_price, value)
+        (buy_now_price, real_price, value)
     )
 
     current_card = context.user_data["current_card"]
     total_cards = context.user_data["total_cards"]
 
     if current_card < total_cards:
-
         next_card = current_card + 1
         context.user_data["current_card"] = next_card
 
@@ -159,14 +158,12 @@ async def coin_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cards = context.user_data["cards"]
 
     grand_total = 0
-
     lines = []
 
     lines.append("🧾 فاکتور محاسبه")
     lines.append("")
 
     for i, (buy_now, real_price, qty) in enumerate(cards, start=1):
-
         formula = buy_now * 0.95 - real_price
         step1 = formula * 1000
         step2 = step1 / 100000
