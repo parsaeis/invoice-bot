@@ -168,7 +168,7 @@ async def coin_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         step1 = formula * 1000
         step2 = step1 / 100000
 
-per_card_money = step2 * coin_price_value
+        per_card_money = step2 * coin_price_value
         card_total = per_card_money * qty
 
         grand_total += card_total
