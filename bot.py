@@ -10,12 +10,16 @@ from telegram.ext import (
     filters,
 )
 
+
 TOKEN = os.environ["BOT_TOKEN"]
 
+
+# مراحل محاسبه
 CARD_COUNT, BUY_NOW, REAL_PRICE, QUANTITY, COIN_PRICE = range(5)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # پاک کردن کامل اطلاعات محاسبه قبلی
     context.user_data.clear()
 
     await update.message.reply_text(
@@ -164,11 +168,15 @@ async def coin_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lines.append("")
 
     for i, (buy_now, real_price, qty) in enumerate(cards, start=1):
+
         formula = buy_now * 0.95 - real_price
+
         step1 = formula * 1000
+
         step2 = step1 / 100000
 
         per_card_money = step2 * coin_price_value
+
         card_total = per_card_money * qty
 
         grand_total += card_total
@@ -192,6 +200,7 @@ async def coin_price(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "برای محاسبه فاکتور جدید، /start را بزنید."
     )
 
+    # پاک کردن اطلاعات بعد از پایان محاسبه
     context.user_data.clear()
 
     return ConversationHandler.END
@@ -209,14 +218,17 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
+
     app = Application.builder().token(TOKEN).build()
 
     conversation = ConversationHandler(
+
         entry_points=[
             CommandHandler("start", start)
         ],
 
         states={
+
             CARD_COUNT: [
                 MessageHandler(
                     filters.TEXT & ~filters.COMMAND,
@@ -256,6 +268,9 @@ def main():
         fallbacks=[
             CommandHandler("cancel", cancel)
         ],
+
+        # اجازه می‌دهد /start وسط محاسبه هم دوباره اجرا شود
+        allow_reentry=True,
     )
 
     app.add_handler(conversation)
